@@ -1,4 +1,5 @@
 fastapi
 uvicorn
-requests==2.31.0
-aiohttp>=3.7.4
+pyTelegramBotAPI
+firebase-admin
+requests

@@ -14,7 +14,7 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
 app = FastAPI()
 
-# @app.get("/")
+@app.get("/")
 
 
 #Initializw the bot

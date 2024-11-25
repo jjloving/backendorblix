@@ -25,7 +25,7 @@ bucket = storage.bucket()
 
 def generate_start_keyboard():
     keyboard = InlineKeyboardMarkup()
-    keyboard.add(InlineKeyboardButton("Open Orblix App", web_app=WebAppInfo(url="https://orblix.netlify.app/")))
+    keyboard.add(InlineKeyboardButton("Open Orblix App", web_app=WebAppInfo(url="https://oblxx.netlify.app/")))
     return keyboard
 
 @bot.message_handler(commands=['start'])

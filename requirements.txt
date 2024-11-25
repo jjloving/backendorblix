@@ -1,5 +1,9 @@
 fastapi
 uvicorn
-pyTelegramBotAPI
-firebase-admin
 requests
+aiohttp
+python-telegram-bot
+firebase-admin
+telebot
+python-dotenv
+pyTelegramBotAPI

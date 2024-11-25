@@ -1,20 +1,32 @@
-from fastapi import FastAPI
-import os
-import json
+from fastapi import FastAPI, Request
 import asyncio
-import requests
-import datetime
 from telebot.async_telebot import AsyncTeleBot
 import firebase_admin
-from firebase_admin import credentials, firestore, storage
+from firebase_admin import credentials, firestore
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
 app = FastAPI()
 
-@app.get("/")
+# Initialize the bot
+BOT_TOKEN = '8113117364:AAEBZZZQrXK2RfmvrKcNfntkvIsgnt-OrTw'
+bot = AsyncTeleBot(BOT_TOKEN)
+
+# Firebase configuration
+firebase_service_account = {
+    "type": "service_account",
+    "project_id": "orblix-15f00",
+    "private_key_id": "bea8674faeeaf44749c4e5dfc69d10847ad72d31",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADAN...",
+    "client_email": "firebase-adminsdk-il80v@orblix-15f00.iam.gserviceaccount.com",
+    "client_id": "102518934139618313626",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-il80v@orblix-15f00.iam.gserviceaccount.com"
+}
 cred = credentials.Certificate(firebase_service_account)
-firebase_admin.initialize_app(cred, {'storageBucket': 'orblix-15f00.appspot.com'})
+firebase_admin.initialize_app(cred)
 db = firestore.client()
-bucket = storage.bucket()
 
 def generate_start_keyboard():
     keyboard = InlineKeyboardMarkup()
@@ -43,29 +55,7 @@ async def start(message):
         user_doc = user_ref.get()
         
         if not user_doc.exists:
-            photos = await bot.get_user_profile_photos(user_id, limit=1)
-            if photos.total_count > 0:
-                file_id = photos.photos[0][-1].file_id
-                file_info = await bot.get_file(file_id)
-                file_path = file_info.file_path
-                file_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_path}"
-
-                # Download the image
-                response = requests.get(file_url)
-                if response.status_code == 200:
-                    # Upload to Firebase Storage
-                    blob = bucket.blob(f"user_images/{user_id}.jpg")
-                    blob.upload_from_string(response.content, content_type='image/jpeg')
-
-                    # Generate the correct URL
-                    user_image = blob.generate_signed_url(datetime.timedelta(days=365), method='GET')
-                else:
-                    user_image = None
-            else:
-                user_image = None
-            
             user_data = {
-                'userImage': user_image,
                 'firstName': user_first_name,
                 'lastName': user_last_name,
                 'username': user_username,
@@ -105,7 +95,6 @@ async def start(message):
                         'addedValue': bonus_amount,
                         'firstName': user_first_name,
                         'lastName': user_last_name,
-                        'userImage': user_image,
                     }
 
                     referrer_ref.update({
@@ -136,4 +125,3 @@ async def process_update(request: Request):
 @app.get('/')
 async def root():
     return {"message": "Bot is running"}
-

@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from telebot import types
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
-
 app = FastAPI()
 
 @app.get("/")

@@ -27,7 +27,6 @@ def generate_start_keyboard():
     keyboard = InlineKeyboardMarkup()
     keyboard.add(InlineKeyboardButton("Open Orblix App", web_app=WebAppInfo(url="https://oblxx.netlify.app/")))
     return keyboard
-
 @bot.message_handler(commands=['start'])
 async def start(message):
     user_id = str(message.from_user.id)
@@ -37,9 +36,6 @@ async def start(message):
     user_language_code = str(message.from_user.language_code)
     is_premium = message.from_user.is_premium
     text = message.text.split()
-
-    print(f"User ID: {user_id}, First Name: {user_first_name}, Text: {text}")
-
     welcome_message = (
         f"Hi, {user_first_name}!👋\n\n"
         f"Welcome to Orblix!\n\n"
@@ -47,23 +43,6 @@ async def start(message):
         f"Airdrop date coming soon!\n\n"
         f"Invite friends to earn more tokens, and level up fast!\n\n"
     )
-
-    try:
-        # Your existing logic...
-        
-        # Send the welcome message
-        await bot.reply_to(message, welcome_message)
-        
-    except Exception as e:
-        error_message = "Error. Please try again!"
-        await bot.reply_to(message, error_message)
-        print(f"Error: {str(e)}")
-
-# Make sure to start polling or set up your webhook
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(bot.polling())
-
 
     try:
         user_ref = db.collection('users').document(user_id)
